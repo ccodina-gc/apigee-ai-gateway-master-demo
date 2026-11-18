@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ Copyright 2026 Google LLC
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<AssignMessage continueOnError="false" enabled="true" name="AM-Err-McpForbidden">
+  <DisplayName>AM-Err-McpForbidden</DisplayName>
+  <Set>
+    <Payload contentType="application/json">{"jsonrpc":"2.0","id":{parsepayload.PP-ParseMcp.json-rpc.request.id:null},"error":{"code":-32003,"message":"Herramienta no autorizada: {parsepayload.PP-ParseMcp.json-rpc.request.params.name} no está incluida en el API Product de esta app.","data":{"type":"mcp_tool_not_allowed","tool":"{parsepayload.PP-ParseMcp.json-rpc.request.params.name}","operation":"{parsepayload.PP-ParseMcp.operation}","proxy":"{apiproxy.name}","requestId":"{messageid}"}}}</Payload>
+    <StatusCode>403</StatusCode>
+    <ReasonPhrase>Forbidden</ReasonPhrase>
+  </Set>
+  <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+  <AssignTo createNew="false" transport="http" type="response"/>
+</AssignMessage>

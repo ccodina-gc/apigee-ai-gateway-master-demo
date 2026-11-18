@@ -1,0 +1,19 @@
+{
+  "name": "aigw-demo",
+  "displayName": "AI Gateway Demo - LLM APIs",
+  "description": "Acceso a los proxies LLM del demo de AI Gateway (OpenAI-compatible).",
+  "approvalType": "auto",
+  "environments": ["__APIGEE_ENV__"],
+  "attributes": [{ "name": "access", "value": "public" }],
+  "operationGroup": {
+    "operationConfigType": "proxy",
+    "operationConfigs": [
+      { "apiSource": "aigw-semantic-cache",   "operations": [{ "resource": "/chat/completions", "methods": ["POST"] }] },
+      { "apiSource": "aigw-model-armor",      "operations": [{ "resource": "/chat/completions", "methods": ["POST"] }] },
+      { "apiSource": "aigw-circuit-breaker",  "operations": [{ "resource": "/chat/completions", "methods": ["POST"] }] },
+      { "apiSource": "aigw-llm-routing",      "operations": [{ "resource": "/chat/completions", "methods": ["POST"] }] },
+      { "apiSource": "aigw-gateway",          "operations": [{ "resource": "/chat/completions", "methods": ["POST"] }] },
+      { "apiSource": "aigw-sse-mcp-bigquery", "operations": [{ "resource": "/chat/completions", "methods": ["POST"] }] }
+    ]
+  }
+}

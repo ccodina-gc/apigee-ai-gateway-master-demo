@@ -1,0 +1,252 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# OpenAPI spec of the Cymbal Retail API (proxy aigw-retail-api).
+# The MCP Discovery Proxy turns every operation into an MCP tool (name = operationId).
+# IMPORTANT: servers.url must use the hostname of the Apigee environment group.
+openapi: 3.0.3
+info:
+  title: Cymbal Retail API
+  description: >-
+    API de Cymbal Retail para agentes de IA - catalogo de productos, stock por tienda,
+    sucursales y ordenes de compra.
+  version: 1.0.0
+servers:
+  - url: https://__APIGEE_HOST__/v1/aigw/retail
+    description: Apigee eval
+paths:
+  /products:
+    get:
+      operationId: searchProducts
+      summary: Buscar productos en el catalogo
+      description: Busca productos por texto libre, categoria o precio maximo. Devuelve SKU, nombre, precio y stock total.
+      parameters:
+        - name: q
+          in: query
+          description: Texto a buscar, por ejemplo "televisor" o "notebook".
+          schema:
+            type: string
+        - name: category
+          in: query
+          description: Categoria del producto.
+          schema:
+            type: string
+            enum: [tv, celulares, notebooks, electrodomesticos, audio]
+        - name: maxPrice
+          in: query
+          description: Precio maximo en USD.
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Lista de productos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductList"
+  /products/{sku}:
+    get:
+      operationId: getProduct
+      summary: Detalle y stock de un producto
+      description: Devuelve el detalle de un producto y su stock en cada tienda.
+      parameters:
+        - name: sku
+          in: path
+          required: true
+          description: SKU del producto, por ejemplo TV-55-QLED.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Producto
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Producto no encontrado
+  /stores:
+    get:
+      operationId: listStores
+      summary: Listar tiendas
+      description: Lista las tiendas de Cymbal Retail, opcionalmente filtradas por ciudad.
+      parameters:
+        - name: city
+          in: query
+          description: Ciudad, por ejemplo "Buenos Aires" o "Lima".
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lista de tiendas
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoreList"
+  /orders:
+    post:
+      operationId: createOrder
+      summary: Crear una orden de compra
+      description: Crea una orden de compra para retirar en una tienda.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewOrder"
+      responses:
+        "201":
+          description: Orden creada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "409":
+          description: Sin stock suficiente
+  /orders/{orderId}:
+    get:
+      operationId: getOrderStatus
+      summary: Estado de una orden
+      description: Devuelve el estado y la fecha estimada de entrega de una orden.
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: Identificador de la orden, por ejemplo ORD-1001.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Orden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "404":
+          description: Orden no encontrada
+  /orders/{orderId}/cancel:
+    post:
+      operationId: cancelOrder
+      summary: Cancelar una orden
+      description: Cancela una orden existente e inicia el reembolso. Operacion sensible.
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: Identificador de la orden a cancelar.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Orden cancelada
+components:
+  schemas:
+    ProductSummary:
+      type: object
+      properties:
+        sku:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+        currency:
+          type: string
+        stockTotal:
+          type: integer
+    ProductList:
+      type: object
+      properties:
+        count:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductSummary"
+    Product:
+      type: object
+      properties:
+        sku:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+        currency:
+          type: string
+        stockTotal:
+          type: integer
+        stockByStore:
+          type: array
+          items:
+            type: object
+            properties:
+              storeId:
+                type: string
+              units:
+                type: integer
+    Store:
+      type: object
+      properties:
+        storeId:
+          type: string
+        name:
+          type: string
+        city:
+          type: string
+        address:
+          type: string
+        hours:
+          type: string
+    StoreList:
+      type: object
+      properties:
+        count:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Store"
+    NewOrder:
+      type: object
+      required: [sku, quantity, storeId]
+      properties:
+        sku:
+          type: string
+          description: SKU del producto.
+        quantity:
+          type: integer
+          description: Cantidad de unidades.
+        storeId:
+          type: string
+          description: Tienda de retiro, por ejemplo STR-01.
+    Order:
+      type: object
+      properties:
+        orderId:
+          type: string
+        status:
+          type: string
+        storeId:
+          type: string
+        total:
+          type: number
+        currency:
+          type: string
+        estimatedDelivery:
+          type: string

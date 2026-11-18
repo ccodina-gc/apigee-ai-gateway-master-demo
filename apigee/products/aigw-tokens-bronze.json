@@ -1,0 +1,17 @@
+{
+  "name": "aigw-tokens-bronze",
+  "displayName": "AI Gateway Demo - Plan Bronze",
+  "description": "AI Product Bronze: cuota baja de tokens (LLMTokenQuota).",
+  "approvalType": "auto",
+  "environments": ["__APIGEE_ENV__"],
+  "attributes": [{ "name": "access", "value": "public" }],
+  "llmOperationGroup": {
+    "operationConfigs": [
+      {
+        "apiSource": "aigw-token-limits",
+        "llmOperations": [{ "resource": "/chat/completions", "methods": ["POST"], "model": "__MODEL_LITE__" }],
+        "llmTokenQuota": { "limit": "1000", "interval": "2", "timeUnit": "minute" }
+      }
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ Copyright 2026 Google LLC
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<MessageLogging continueOnError="true" enabled="true" name="ML-Log">
+  <DisplayName>ML-Log</DisplayName>
+  <CloudLogging>
+    <LogName>projects/{organization.name}/logs/__LOG_NAME__</LogName>
+    <!-- Compact JSON entry built by JS-Finalize (aigw-finalize.js): only non-empty fields. -->
+    <Message contentType="application/json">{aigw.log_json}</Message>
+    <Labels>
+      <Label>
+        <Key>proxy</Key>
+        <Value>aigw-circuit-breaker</Value>
+      </Label>
+      <Label>
+        <Key>capability</Key>
+        <Value>circuit-breaker</Value>
+      </Label>
+    </Labels>
+  </CloudLogging>
+</MessageLogging>

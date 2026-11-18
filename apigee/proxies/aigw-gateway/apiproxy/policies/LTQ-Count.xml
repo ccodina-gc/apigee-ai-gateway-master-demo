@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ Copyright 2026 Google LLC
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<LLMTokenQuota continueOnError="false" enabled="true" name="LTQ-Count" type="calendar">
+  <DisplayName>LTQ-Count</DisplayName>
+  <Allow count="30000"/>
+  <Interval>5</Interval>
+  <TimeUnit>minute</TimeUnit>
+  <Identifier ref="verifyapikey.VA-VerifyAPIKey.client_id"/>
+  <Distributed>true</Distributed>
+  <Synchronous>true</Synchronous>
+  <StartTime>2026-01-01 00:00:00</StartTime>
+  <LLMTokenUsageSource>{jsonPath('$.usage.total_tokens',response.content,true)}</LLMTokenUsageSource>
+  <LLMModelSource>aigw-gateway</LLMModelSource>
+  <CountOnly>true</CountOnly>
+  <SharedName>aigw-gateway</SharedName>
+</LLMTokenQuota>

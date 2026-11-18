@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ Copyright 2026 Google LLC
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<TargetEndpoint name="primary">
+  <Description>Primary: Gemini on Vertex AI (global)</Description>
+  <PreFlow name="PreFlow">
+      <Request>
+        <Step>
+          <Name>AM-MarkPrimary</Name>
+        </Step>
+        <Step>
+          <Name>AM-SimulateFailure</Name>
+          <Condition>aigw.simulate = "primary"</Condition>
+        </Step>
+        <Step>
+          <Name>AM-CleanRequest</Name>
+        </Step>
+      </Request>
+      <Response>
+        <Step>
+          <Name>JS-CircuitPrepare</Name>
+          <Condition>(response.status.code = 429) or (response.status.code GreaterThanOrEquals 500)</Condition>
+        </Step>
+        <Step>
+          <Name>Q-CB-Count</Name>
+          <Condition>aigw.failover_needed = "true"</Condition>
+        </Step>
+        <Step>
+          <Name>AM-PrepSecondary</Name>
+          <Condition>aigw.failover_needed = "true"</Condition>
+        </Step>
+        <Step>
+          <Name>SC-Secondary</Name>
+          <Condition>aigw.failover_needed = "true"</Condition>
+        </Step>
+        <Step>
+          <Name>AM-UseSecondary</Name>
+          <Condition>aigw.failover_needed = "true"</Condition>
+        </Step>
+        <Step>
+          <Name>JS-NormalizeSecondary</Name>
+          <Condition>aigw.failover_needed = "true"</Condition>
+        </Step>
+        <Step>
+          <Name>JS-CircuitComplete</Name>
+          <Condition>aigw.failover_needed = "true"</Condition>
+        </Step>
+      </Response>
+  </PreFlow>
+  <PostFlow name="PostFlow">
+    <Request/>
+    <Response/>
+  </PostFlow>
+  <HTTPTargetConnection>
+    <Authentication>
+      <GoogleAccessToken>
+        <Scopes>
+          <Scope>https://www.googleapis.com/auth/cloud-platform</Scope>
+        </Scopes>
+      </GoogleAccessToken>
+    </Authentication>
+    <Properties>
+      <Property name="success.codes">1xx,2xx,3xx,4xx,5xx</Property>
+      <Property name="io.timeout.millis">120000</Property>
+    </Properties>
+    <URL>https://__LLM_HOST__/v1/projects/__PROJECT_ID__/locations/__LLM_LOCATION__/endpoints/openapi</URL>
+  </HTTPTargetConnection>
+</TargetEndpoint>

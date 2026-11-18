@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ Copyright 2026 Google LLC
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<TargetEndpoint name="bigquery">
+  <Description>BigQuery remote MCP server</Description>
+  <PreFlow name="PreFlow">
+      <Request>
+        <Step>
+          <Name>AM-NoPathSuffix</Name>
+        </Step>
+        <Step>
+          <Name>AM-CleanRequest</Name>
+        </Step>
+      </Request>
+      <Response/>
+  </PreFlow>
+  <PostFlow name="PostFlow">
+    <Request/>
+    <Response/>
+  </PostFlow>
+  <EventFlow name="EventFlow" content-type="text/event-stream">
+    <Response>
+      <Step>
+        <Name>JS-SseEvent</Name>
+      </Step>
+    </Response>
+  </EventFlow>
+  <HTTPTargetConnection>
+    <Authentication>
+      <GoogleAccessToken>
+        <Scopes>
+          <Scope>https://www.googleapis.com/auth/bigquery</Scope>
+          <Scope>https://www.googleapis.com/auth/cloud-platform</Scope>
+        </Scopes>
+      </GoogleAccessToken>
+    </Authentication>
+    <Properties>
+      <Property name="success.codes">1xx,2xx,3xx,4xx</Property>
+      <Property name="io.timeout.millis">60000</Property>
+    </Properties>
+    <URL>https://bigquery.googleapis.com/mcp</URL>
+  </HTTPTargetConnection>
+</TargetEndpoint>

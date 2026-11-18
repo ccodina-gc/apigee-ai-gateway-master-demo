@@ -1,0 +1,18 @@
+# dotenv environment variable files
+env.sh
+*.env.sh
+
+# Generated bundles, zips, API keys and logs (contain secrets: never commit)
+.build/
+*.log
+
+# Frontend dependencies
+frontend/node_modules/
+
+# OS / editor files
+.DS_Store
+.vscode/
+.idea/
+
+# Python bytecode
+__pycache__/

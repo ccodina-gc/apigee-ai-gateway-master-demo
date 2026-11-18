@@ -1,0 +1,22 @@
+{
+  "name": "__ROUTING_KVM_NAME__",
+  "encrypted": true,
+  "keyValueEntries": [
+    {
+      "name": "google__targetUrl",
+      "value": "https://__LLM_HOST__/v1/projects/__PROJECT_ID__/locations/__LLM_LOCATION__/endpoints/openapi/chat/completions"
+    },
+    {
+      "name": "google__defaultModel",
+      "value": "__ROUTING_GEMINI_MODEL__"
+    },
+    {
+      "name": "anthropic__targetUrl",
+      "value": "https://__ROUTING_CLAUDE_HOST__/v1/projects/__PROJECT_ID__/locations/__ROUTING_CLAUDE_LOCATION__/publishers/anthropic/models/__ROUTING_CLAUDE_MODEL__:rawPredict"
+    },
+    {
+      "name": "anthropic__defaultModel",
+      "value": "__ROUTING_CLAUDE_MODEL__"
+    }
+  ]
+}

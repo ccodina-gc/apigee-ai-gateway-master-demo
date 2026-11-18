@@ -1,0 +1,14 @@
+# Files not uploaded to Cloud Build (gcloud run deploy --source / gcloud builds submit).
+.gcloudignore
+.git
+.gitignore
+node_modules/
+npm-debug.log*
+.env
+.env.*
+.DS_Store
+README.md
+
+# A local lockfile may point to a private npm registry; dependencies are
+# resolved from the public registry during the build.
+package-lock.json

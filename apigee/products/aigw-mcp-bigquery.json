@@ -1,0 +1,28 @@
+{
+  "name": "aigw-mcp-bigquery",
+  "displayName": "AI Gateway Demo - MCP BigQuery (solo lectura)",
+  "description": "Herramientas de solo lectura del MCP remoto de BigQuery (execute_sql y cancel_job quedan bloqueadas).",
+  "approvalType": "auto",
+  "environments": ["__APIGEE_ENV__"],
+  "attributes": [{ "name": "access", "value": "public" }],
+  "payloadOperationGroup": {
+    "operationConfigs": [
+      { "apiSource": "aigw-sse-mcp-bigquery", "operations": [{ "operation": "tools/list" }],
+        "quota": { "limit": "300", "interval": "1", "timeUnit": "minute" } },
+      { "apiSource": "aigw-sse-mcp-bigquery", "operations": [{ "operation": "tools/call/list_dataset_ids" }],
+        "quota": { "limit": "120", "interval": "1", "timeUnit": "minute" } },
+      { "apiSource": "aigw-sse-mcp-bigquery", "operations": [{ "operation": "tools/call/get_dataset_info" }],
+        "quota": { "limit": "120", "interval": "1", "timeUnit": "minute" } },
+      { "apiSource": "aigw-sse-mcp-bigquery", "operations": [{ "operation": "tools/call/list_table_ids" }],
+        "quota": { "limit": "120", "interval": "1", "timeUnit": "minute" } },
+      { "apiSource": "aigw-sse-mcp-bigquery", "operations": [{ "operation": "tools/call/get_table_info" }],
+        "quota": { "limit": "120", "interval": "1", "timeUnit": "minute" } },
+      { "apiSource": "aigw-sse-mcp-bigquery", "operations": [{ "operation": "tools/call/execute_sql_readonly" }],
+        "quota": { "limit": "30", "interval": "1", "timeUnit": "minute" } },
+      { "apiSource": "aigw-sse-mcp-bigquery", "operations": [{ "operation": "tools/call/get_query_results" }],
+        "quota": { "limit": "30", "interval": "1", "timeUnit": "minute" } },
+      { "apiSource": "aigw-sse-mcp-bigquery", "operations": [{ "operation": "tools/call/get_job" }],
+        "quota": { "limit": "30", "interval": "1", "timeUnit": "minute" } }
+    ]
+  }
+}

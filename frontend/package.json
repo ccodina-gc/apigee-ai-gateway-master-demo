@@ -1,0 +1,19 @@
+{
+  "name": "aigw-demo-portal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Apigee AI Gateway demo portal (static UI + thin relay to Apigee) for Cloud Run",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "server.js",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "google-auth-library": "^10.1.0"
+  }
+}

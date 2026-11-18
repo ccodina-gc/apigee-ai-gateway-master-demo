@@ -1,0 +1,66 @@
+# ---------------------------------------------------------------------------
+# Apigee AI Gateway demo - environment
+# Usage: source ./env.sh
+# ---------------------------------------------------------------------------
+
+# Target environment
+export PROJECT="[PROJECT_ID]"
+export PROJECT_ID="${PROJECT}"
+export PROJECT_NUMBER="[PROJECT_NUMBER]"
+export APIGEE_ENV="[ENVIRONMENT]"
+export APIGEE_HOST="[HOSTNAME]"
+export REGION="[REGION]"
+
+# LLMs 
+export LLM_LOCATION="global"
+export MODEL_LITE="google/gemini-3.5-flash-lite"
+export MODEL_FLASH="google/gemini-3.8-flash"
+export MODEL_PRO="google/gemini-4-argon"
+export MODEL_FALLBACK="claude-sonnet-5-5"
+export FALLBACK_LOCATION="global"
+
+# LLM Routing
+export ROUTING_GEMINI_MODEL="google/gemini-3.5-flash"
+export ROUTING_CLAUDE_MODEL="claude-sonnet-5-5"
+export ROUTING_CLAUDE_LOCATION="global"
+export ROUTING_KVM_NAME="aigw-llm-routing-config"
+
+# Hostnames derived from the locations ("global" has no regional prefix)
+if [ "${LLM_LOCATION}" = "global" ]; then export LLM_HOST="aiplatform.googleapis.com"; else export LLM_HOST="${LLM_LOCATION}-aiplatform.googleapis.com"; fi
+if [ "${FALLBACK_LOCATION}" = "global" ]; then export FALLBACK_HOST="aiplatform.googleapis.com"; else export FALLBACK_HOST="${FALLBACK_LOCATION}-aiplatform.googleapis.com"; fi
+if [ "${ROUTING_CLAUDE_LOCATION}" = "global" ]; then export ROUTING_CLAUDE_HOST="aiplatform.googleapis.com"; else export ROUTING_CLAUDE_HOST="${ROUTING_CLAUDE_LOCATION}-aiplatform.googleapis.com"; fi
+
+# Model Armor
+export MODEL_ARMOR_LOCATION="${REGION}"
+export MODEL_ARMOR_TEMPLATE="aigw-demo-template"
+
+# Semantic cache (Vertex AI Vector Search + embeddings)
+export EMBEDDINGS_MODEL="text-multilingual-embedding-002"
+export EMBEDDINGS_DIMENSIONS="768"
+export VS_INDEX_NAME="aigw-semantic-cache-index"
+export VS_ENDPOINT_NAME="aigw-semantic-cache-endpoint"
+export VS_DEPLOYED_INDEX_ID="aigw_semantic_cache"
+export VS_MACHINE_TYPE="e2-standard-2"
+# Calibrated with text-multilingual-embedding-002: paraphrases score ~0.89-0.97,
+# unrelated questions ~0.58-0.75 (normalized vectors, dot product = cosine).
+export SEMANTIC_CACHE_THRESHOLD="0.92"
+# 15 minutes: long enough for a demo session, short enough to start the next one with a MISS
+export SEMANTIC_CACHE_TTL_SEC="900"
+
+# Service accounts
+export PROXY_SA_NAME="aigw-proxy-sa"
+export PORTAL_SA_NAME="aigw-portal-sa"
+# Only used to deploy the MCP Discovery Proxy (requires roles/apigee.admin per the MCP quickstart)
+export MCP_SA_NAME="aigw-mcp-sa"
+# Builds the portal image (gcloud run deploy --source) instead of the default compute SA
+export BUILD_SA_NAME="aigw-build-sa"
+
+# Cloud Run portal
+export PORTAL_SERVICE="aigw-demo-portal"
+export PORTAL_REGION="${REGION}"
+# Portal Basic Auth (any user name + passcode). Empty/auto = generated once and saved in
+# .build/portal-passcode.txt; "off" = no passcode; any other value = that passcode.
+export PORTAL_PASSCODE="${PORTAL_PASSCODE:-auto}"
+
+# Cloud Logging log written by every proxy
+export LOG_NAME="aigw-demo"

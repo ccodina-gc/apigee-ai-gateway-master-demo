@@ -1,0 +1,16 @@
+# Not needed inside the image.
+node_modules
+npm-debug.log*
+.git
+.gitignore
+.gcloudignore
+.dockerignore
+Dockerfile
+README.md
+.env
+.env.*
+.DS_Store
+
+# A local lockfile may point to a private npm registry; dependencies are
+# resolved from the public registry during the build.
+package-lock.json

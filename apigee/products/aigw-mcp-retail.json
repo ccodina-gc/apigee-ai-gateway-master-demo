@@ -1,0 +1,24 @@
+{
+  "name": "aigw-mcp-retail",
+  "displayName": "AI Gateway Demo - MCP Cymbal Retail",
+  "description": "Herramientas MCP de Cymbal Retail para agentes (sin cancelOrder; createOrder limitado a 3/min).",
+  "approvalType": "auto",
+  "environments": ["__APIGEE_ENV__"],
+  "attributes": [{ "name": "access", "value": "public" }],
+  "payloadOperationGroup": {
+    "operationConfigs": [
+      { "apiSource": "aigw-mcp-retail", "operations": [{ "operation": "tools/list" }],
+        "quota": { "limit": "300", "interval": "1", "timeUnit": "minute" } },
+      { "apiSource": "aigw-mcp-retail", "operations": [{ "operation": "tools/call/searchProducts" }],
+        "quota": { "limit": "60", "interval": "1", "timeUnit": "minute" } },
+      { "apiSource": "aigw-mcp-retail", "operations": [{ "operation": "tools/call/getProduct" }],
+        "quota": { "limit": "60", "interval": "1", "timeUnit": "minute" } },
+      { "apiSource": "aigw-mcp-retail", "operations": [{ "operation": "tools/call/listStores" }],
+        "quota": { "limit": "60", "interval": "1", "timeUnit": "minute" } },
+      { "apiSource": "aigw-mcp-retail", "operations": [{ "operation": "tools/call/getOrderStatus" }],
+        "quota": { "limit": "60", "interval": "1", "timeUnit": "minute" } },
+      { "apiSource": "aigw-mcp-retail", "operations": [{ "operation": "tools/call/createOrder" }],
+        "quota": { "limit": "3", "interval": "1", "timeUnit": "minute" } }
+    ]
+  }
+}

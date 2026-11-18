@@ -1,0 +1,17 @@
+{
+  "name": "aigw-tokens-gold",
+  "displayName": "AI Gateway Demo - Plan Gold",
+  "description": "AI Product Gold: cuota alta de tokens (LLMTokenQuota).",
+  "approvalType": "auto",
+  "environments": ["__APIGEE_ENV__"],
+  "attributes": [{ "name": "access", "value": "public" }],
+  "llmOperationGroup": {
+    "operationConfigs": [
+      {
+        "apiSource": "aigw-token-limits",
+        "llmOperations": [{ "resource": "/chat/completions", "methods": ["POST"], "model": "__MODEL_LITE__" }],
+        "llmTokenQuota": { "limit": "50000", "interval": "2", "timeUnit": "minute" }
+      }
+    ]
+  }
+}
