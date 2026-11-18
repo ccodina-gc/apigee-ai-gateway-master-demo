@@ -1,7 +1,11 @@
 # Apigee AI Gateway · Demo para clientes
 
+[![Ver Presentación Interactiva](https://img.shields.io/badge/Presentaci%C3%B3n_Interactiva-GitHub_Pages-4285F4?style=for-the-badge&logo=googlecloud&logoColor=white)](https://ccodina-gc.github.io/apigee-ai-gateway-master-demo/)
+
 Portal que explica y deja **probar en vivo** las capacidades de
 AI Gateway de Apigee X. Cada capacidad es un API proxy independiente, y uno más las suma todas.
+
+📊 **[Abrir presentación de diapositivas](https://ccodina-gc.github.io/apigee-ai-gateway-master-demo/)**: resumen ejecutivo del caso de uso de AI Gateway, los problemas habituales al escalar IA en empresas (*Agent/Tool Sprawl*, control de tokens, seguridad/PII, observabilidad y resiliencia) y todo lo que se puede probar en vivo con esta demo.
 
 Cada escenario es un botón: el portal muestra la respuesta, los headers del gateway, el request, el cURL equivalente y el **log de Apigee en Cloud Logging**.
 
@@ -210,6 +214,8 @@ ai-gateway-master/
 │   ├── common/jsc/        # JavaScript compartido (logging, armor, router, circuito, SSE, fallback MCP)
 │   ├── proxies/           # bundles generados (10 proxies)
 │   └── products/          # API Products (REST, AI Products y MCP)
-├── docs/img/              # capturas del portal
+├── docs/
+│   ├── index.html         # presentación interactiva (GitHub Pages)
+│   └── img/               # capturas del portal
 └── frontend/              # portal (Express + HTML/CSS/JS sin build)
 ```
