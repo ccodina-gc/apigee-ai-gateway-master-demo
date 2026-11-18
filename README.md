@@ -75,7 +75,7 @@ Todos los proxies:
    ```bash
    gcloud auth login
    gcloud auth application-default login
-   gcloud config set project macro-project-512518
+   gcloud config set project [PROJECT_ID]
    ```
 
 2. Revisar [`env.sh`](env.sh): proyecto, environment de Apigee, hostname, regiones y modelos.
@@ -147,7 +147,7 @@ Cada request genera un JSON compacto con `requestId`, `proxy`, `capability`, `st
 failover, circuito y tool MCP. Para verlo en Logs Explorer:
 
 ```text
-logName="projects/macro-project-512518/logs/aigw-demo"
+logName="projects/[PROJECT_ID]/logs/aigw-demo"
 jsonPayload.proxy="aigw-gateway"
 ```
 
@@ -170,35 +170,14 @@ Vector Search, el template de Model Armor y las cuentas de servicio. No toca otr
 
 ## Notas técnicas
 
-- **Modelos**: Gemini 3.5 Flash-Lite (`MODEL_LITE`), 3.8 Flash (`MODEL_FLASH`) y 4 Argon (`MODEL_PRO`) por el endpoint
-  compatible con OpenAI de Vertex AI en `global` (exige el prefijo `google/`). Como fallback del circuit breaker y del
-  gateway se usa `claude-sonnet-5-5` (Anthropic, Model Garden) por `:rawPredict` en `global`: Apigee traduce el request
-  OpenAI a la Messages API de Anthropic y normaliza la respuesta, así la app no cambia. El routing por header usa
-  `google/gemini-3.5-flash` y `claude-sonnet-5-5` (KVM `aigw-llm-routing-config`).
-  Gemini 3.8 Flash no acepta `reasoning_effort: minimal` (se usa `low`), los endpoints regionales de Claude no tienen
-  cuota en este proyecto (429) y Gemini 2.5 no estaba disponible en este proyecto.
-- **Semantic cache**: `text-multilingual-embedding-002` (768 dimensiones) y Vector Search con `DOT_PRODUCT`.
-  El umbral 0.92 se calibró con preguntas en español: las paráfrasis dan 0.89–0.97 y las preguntas distintas 0.58–0.75.
-  Las entradas viven 15 minutos (`SEMANTIC_CACHE_TTL_SEC`), así cada demo nueva arranca con un MISS.
+- **Modelos**: Gemini 3.5 Flash-Lite (`MODEL_LITE`), 3.8 Flash (`MODEL_FLASH`) y 4 Argon (`MODEL_PRO`) en `global` (exige el prefijo `google/`). Como fallback del circuit breaker y del gateway se usa `claude-sonnet-5-5` (Anthropic, Model Garden) por `:rawPredict` en `global`: Apigee traduce el request OpenAI a la Messages API de Anthropic y normaliza la respuesta, así la app no cambia. El routing por header usa `google/gemini-3.5-flash` y `claude-sonnet-5-5` (KVM `aigw-llm-routing-config`). 
+- **Semantic cache**: `text-multilingual-embedding-002` (768 dimensiones) y Vector Search con `DOT_PRODUCT`. El umbral 0.92 se calibró con preguntas en español: las paráfrasis dan 0.89–0.97 y las preguntas distintas 0.58–0.75. Las entradas viven 15 minutos (`SEMANTIC_CACHE_TTL_SEC`), así cada demo nueva arranca con un MISS.
 - **MCP Discovery Proxy**: `aigw-mcp-retail` apunta al servidor MCP gestionado de Apigee
   (`ORG.mcp.apigee.internal`), que genera las tools desde [`retail-openapi.yaml`](apigee/proxies/aigw-mcp-retail/apiproxy/resources/oas/retail-openapi.yaml).
-  Apigee lo aprovisiona en forma asíncrona después del deploy: mientras tanto el deployment figura como
-  `PROGRESSING` y el host interno no resuelve. Para que la demo funcione igual, una FaultRule del target
-  responde con [`aigw-mcp-fallback.js`](apigee/common/jsc/aigw-mcp-fallback.js): mismas tools que el OAS y `tools/list`
-  filtrado con `apiproduct.operation.payload.tools`. El header `x-aigw-mcp-server` (`managed` o `fallback`)
-  y el portal muestran cuál respondió. VerifyAPIKey, el filtro por API Product y las cuotas por tool se
-  aplican en los dos casos.
-- **MCP de BigQuery**: el servidor remoto responde `application/json` aunque el cliente acepte
-  `text/event-stream`, así que el SSE se demuestra con el streaming de Gemini en el mismo proxy (EventFlow).
-  Apigee filtra automáticamente `tools/list`: `execute_sql` y `cancel_job` no aparecen porque no están en el API Product.
-- **API Products MCP**: en este runtime cada `operationConfig` de `payloadOperationGroup` admite una sola operación,
-  así que hay una entrada por tool (con su cuota).
-- **Circuit breaker**: el target primario acepta cualquier código HTTP (`success.codes`), así el failover ocurre en
-  el response flow y Model Armor, la caché y el conteo de tokens también se aplican a la respuesta del fallback.
-  El header `x-aigw-simulate-failure: primary` apunta el primario a `aigw-mock-llm`, que devuelve un 429.
-  Dos failovers en un minuto abren el circuito (Quota `EnforceOnly` + `CountOnly` con el mismo `SharedName`).
-- **JavaScript en Apigee**: las `properties` de las políticas llegan como `java.lang.String`; se convierten con
-  `String()` antes de compararlas con `===`.
+- **MCP de BigQuery**: el servidor remoto responde `application/json` aunque el cliente acepte `text/event-stream`, así que el SSE se demuestra con el streaming de Gemini en el mismo proxy (EventFlow). Apigee filtra automáticamente `tools/list`: `execute_sql` y `cancel_job` no aparecen porque no están en el API Product.
+- **API Products MCP**: en este runtime cada `operationConfig` de `payloadOperationGroup` admite una sola operación, así que hay una entrada por tool (con su cuota).
+- **Circuit breaker**: el target primario acepta cualquier código HTTP (`success.codes`), así el failover ocurre en el response flow y Model Armor, la caché y el conteo de tokens también se aplican a la respuesta del fallback.  El header `x-aigw-simulate-failure: primary` apunta el primario a `aigw-mock-llm`, que devuelve un 429. Dos failovers en un minuto abren el circuito (Quota `EnforceOnly` + `CountOnly` con el mismo `SharedName`).
+- **JavaScript en Apigee**: las `properties` de las políticas llegan como `java.lang.String`; se convierten con `String()` antes de compararlas con `===`.
 - **Headers HTTP**: los valores van solo en ASCII; los cuerpos JSON van en UTF-8.
 
 ## Estructura

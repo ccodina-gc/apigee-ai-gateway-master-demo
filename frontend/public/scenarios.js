@@ -87,7 +87,7 @@ const TOP_NAMES_SQL = 'SELECT name, SUM(number) AS total FROM `bigquery-public-d
   + 'WHERE year >= 2000 GROUP BY name ORDER BY total DESC LIMIT 10';
 const CB_PROMPT = '¿Qué es un circuit breaker en arquitectura de software?';
 const FAIL_PRIMARY = { 'x-aigw-simulate-failure': 'primary' };
-const projectOf = (config) => config.projectId || 'macro-project-512518';
+const projectOf = (config) => config.projectId || 'your-project-id';
 
 export const CAPABILITIES = [
   {
